@@ -4,7 +4,8 @@ import hashlib as hl
 from threading import Timer
 
 def timerpackunpack(widget, output):
-    widget.configure(text=output)
+    widget.configure(text=output, fg = "#ff0000")
+    Timer(1, lambda: widget.configure(fg = "#000000")).start()
     widget.pack()
     Timer(2, lambda: widget.pack_forget()).start()
 
@@ -37,18 +38,17 @@ def comparechecksums():
             # If there are any duplicates
             if len(hashes) != len(set(hashes)):
                 # if duplicate append filename to duplicates list
-                    # duplicates.append(files[idx])
-                    '''Duplicate list should consist of all the files who shares a checksum, i.e: 
-                    [[1stDuplicateOfChecksum1, 2ndDuplicateOfChecksum1], [1stDuplicateOfChecksum2, 
-                    2ndDuplicateOfChecksum2]]
-                    From this there should be inserted a single index of the first list in the list to the ListBox widget like this:
-                    "1stDuplicateOfChecksum1 <-> 2ndDuplicateOfChecksum1 <-> 3rd... <-> 4th....",
-                    "1stDuplicateOfChecksum2 <-> 2ndDuplicateOfChecksum2"
-                    etc.
+                # duplicates.append(files[idx])
+                '''Duplicate list should consist of all the files who shares a checksum, i.e: 
+                [[1stDuplicateOfChecksum1, 2ndDuplicateOfChecksum1], [1stDuplicateOfChecksum2, 
+                2ndDuplicateOfChecksum2]]
+                From this there should be inserted a single index of the first list in the list to the ListBox widget like this:
+                "1stDuplicateOfChecksum1 <-> 2ndDuplicateOfChecksum1 <-> 3rd... <-> 4th....",
+                "1stDuplicateOfChecksum2 <-> 2ndDuplicateOfChecksum2"
+                etc.
 
-                    This should, however, not be the full path but only "filename"
-                    '''
-
+                This should, however, not be the full path but only "filename"
+                '''
                 listbox.pack()
             else:
                 timerpackunpack(label, "No duplicates found within the directory")
