@@ -34,13 +34,21 @@ def comparechecksums():
                     for byte_block in iter(lambda: f.read(4096), b""):
                         sha256_hash.update(byte_block)
                 hashes.append(sha256_hash.hexdigest())
-            # for idx, hash in enumerate(hashes):
-            #     if (hash == hashes[any]):
-            #         print(hash)
             # If there are any duplicates
             if len(hashes) != len(set(hashes)):
-                # if duplicate
+                # if duplicate append filename to duplicates list
                     # duplicates.append(files[idx])
+                    '''Duplicate list should consist of all the files who shares a checksum, i.e: 
+                    [[1stDuplicateOfChecksum1, 2ndDuplicateOfChecksum1], [1stDuplicateOfChecksum2, 
+                    2ndDuplicateOfChecksum2]]
+                    From this there should be inserted a single index of the first list in the list to the ListBox widget like this:
+                    "1stDuplicateOfChecksum1 <-> 2ndDuplicateOfChecksum1 <-> 3rd... <-> 4th....",
+                    "1stDuplicateOfChecksum2 <-> 2ndDuplicateOfChecksum2"
+                    etc.
+
+                    This should, however, not be the full path but only "filename"
+                    '''
+
                 listbox.pack()
             else:
                 timerpackunpack(label, "No duplicates found within the directory")
