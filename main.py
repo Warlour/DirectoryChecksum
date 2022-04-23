@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 import hashlib as hl
 from threading import Timer
+from pathlib import Path
 
 def timerpackunpack(widget, output):
     widget.configure(text=output, fg = "#ff0000")
@@ -9,10 +10,47 @@ def timerpackunpack(widget, output):
     widget.pack()
     Timer(2, lambda: widget.pack_forget()).start()
 
+"""
+Returns a `dict` mapping hashes to sets of filenames.
+
+`files` is an iterable over something supported by `open()` (e.g. `files`
+can be a `list` of `str`s).
+
+`hashes` and `duplicates` are intended for internal use only (recursing on
+subdirectories).
+"""
+def find_duplicates(files, duplicates = {}):
+    for file in files:
+        sha256_hash = hl.sha256()
+        with open(file, "rb") as f:
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+
+        hash = sha256_hash.hexdigest()
+
+        # Add this hash occurrence to the `duplicates` dict. It will be
+        # removed later if no other duplicates are found.
+        if hash in duplicates:
+            duplicates[hash].add(file)
+        else:
+            duplicates[hash] = {file}
+
+    nonduplicates = []
+
+    # Remove non-duplicates from 
+    for key in duplicates:
+        if len(duplicates[key]) < 2:
+            nonduplicates.append(key)
+    
+    for key in nonduplicates:
+        del duplicates[key]
+
+    return duplicates
+
 def comparechecksums():
     files = [] # All file names
     hashes = [] # SHA256-hash of all file names
-    duplicates = [] # Duplicate files
+    duplicates = {} # Duplicate files
     listbox.delete(0, tk.END)
     listbox.pack_forget()
     label.pack_forget()
@@ -26,32 +64,23 @@ def comparechecksums():
             # Check if it is a file
             if os.path.isfile(f):
                 files.append(f)
-        if (files):
+        if files:
+            duplicates = find_duplicates(files, duplicates)
+            
+            idx = 1
+            for duplicateset in duplicates.values():
+                listbox.insert(idx, "These files share the same checksum: ")
+                idx += 1
+                for element in duplicateset:
+                    listbox.insert(idx, element)
+                    idx += 1
+                listbox.insert(idx, "")
+                idx += 1
             label.configure(text = "List of files with the same checksum")
             label.pack()
-            for file in files:
-                sha256_hash = hl.sha256()
-                with open(file, "rb") as f:
-                    for byte_block in iter(lambda: f.read(4096), b""):
-                        sha256_hash.update(byte_block)
-                hashes.append(sha256_hash.hexdigest())
-            # If there are any duplicates
-            if len(hashes) != len(set(hashes)):
-                # if duplicate append filename to duplicates list
-                # duplicates.append(files[idx])
-                '''Duplicate list should consist of all the files who shares a checksum, i.e: 
-                [[1stDuplicateOfChecksum1, 2ndDuplicateOfChecksum1], [1stDuplicateOfChecksum2, 
-                2ndDuplicateOfChecksum2]]
-                From this there should be inserted a single index of the first list in the list to the ListBox widget like this:
-                "1stDuplicateOfChecksum1 <-> 2ndDuplicateOfChecksum1 <-> 3rd... <-> 4th....",
-                "1stDuplicateOfChecksum2 <-> 2ndDuplicateOfChecksum2"
-                etc.
-
-                This should, however, not be the full path but only "filename"
-                '''
-                listbox.pack()
-            else:
-                timerpackunpack(label, "No duplicates found within the directory")
+            listbox.pack()
+        else:
+            timerpackunpack(label, "No duplicates found within the directory")
 
             
 
