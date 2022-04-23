@@ -85,6 +85,8 @@ def comparechecksums():
             
 
 window = tk.Tk()
+window.title("Directory compare")
+window.iconbitmap("icon.ico")
 window.geometry("500x250")
 window.configure(bg = "#F2F2F2")
 pathlabel = tk.Label(window, text="Path to compare checksum", justify = "left")
