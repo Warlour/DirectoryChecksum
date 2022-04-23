@@ -51,6 +51,7 @@ def comparechecksums():
     files = [] # All file names
     hashes = [] # SHA256-hash of all file names
     duplicates = {} # Duplicate files
+    txtprint.pack_forget()
     listbox.delete(0, tk.END)
     listbox.pack_forget()
     label.pack_forget()
@@ -79,19 +80,24 @@ def comparechecksums():
             label.configure(text = "List of files with the same checksum")
             label.pack()
             listbox.pack()
+            txtprint.pack()
         else:
             timerpackunpack(label, "No duplicates found within the directory")
 
-            
+def tofile():
+    with open('duplicatefiles.txt', 'w') as f:
+        for i in listbox.get(first=0, last=tk.END):
+            f.write(i+"\n")
+        
 
 window = tk.Tk()
 window.title("Directory compare")
-window.iconbitmap("icon.ico")
-window.geometry("500x250")
+window.geometry("750x800")
 window.configure(bg = "#F2F2F2")
 pathlabel = tk.Label(window, text="Path to compare checksum", justify = "left")
-pathbox = tk.Text(window, height = 2, width = window.winfo_screenwidth(), bg = "#CDCDCD")
-listbox = tk.Listbox(window, width = window.winfo_screenwidth())
+pathbox = tk.Text(window, height = 2, width = window.winfo_reqwidth(), bg = "#CDCDCD")
+listbox = tk.Listbox(window, width = window.winfo_reqwidth(), height = window.winfo_reqheight()-500)
+txtprint = tk.Button(window, text="Print to txt-file", width = 15, command=tofile)
 
 label = tk.Label(window, text="", justify="center")
 pathlabel.pack()
