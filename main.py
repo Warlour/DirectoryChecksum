@@ -2,7 +2,7 @@ import os
 import tkinter as tk
 import hashlib as hl
 from threading import Timer
-from pathlib import Path
+import subprocess as sp
 
 def timerpackunpack(widget, output):
     widget.configure(text=output, fg = "#ff0000")
@@ -88,6 +88,7 @@ def tofile():
     with open('duplicatefiles.txt', 'w') as f:
         for i in listbox.get(first=0, last=tk.END):
             f.write(i+"\n")
+    sp.Popen(["notepad.exe", "duplicatefiles.txt"])
         
 
 window = tk.Tk()
