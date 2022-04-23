@@ -60,11 +60,12 @@ def comparechecksums():
     if not os.path.exists(os.path.dirname(path)) or not os.path.isdir(path):
         timerpackunpack(label, "Not a path to a directory")
     elif os.path.isdir(path):
-        for filename in os.listdir(path):
-            f = os.path.join(path, filename)
-            # Check if it is a file
-            if os.path.isfile(f) and not os.path.isdir(f):
-                files.append(f)
+        for subdir, dirs, filename in os.walk(path):
+            for file in filename:
+                f = os.path.join(subdir, file)
+                # Check if it is a file
+                if os.path.isfile(f) and not os.path.isdir(f):
+                    files.append(f)
         if files:
             duplicates = find_duplicates(files, duplicates)
             
