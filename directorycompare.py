@@ -63,7 +63,7 @@ def comparechecksums():
         for filename in os.listdir(path):
             f = os.path.join(path, filename)
             # Check if it is a file
-            if os.path.isfile(f):
+            if os.path.isfile(f) and not os.path.isdir(f):
                 files.append(f)
         if files:
             duplicates = find_duplicates(files, duplicates)
@@ -85,10 +85,11 @@ def comparechecksums():
             timerpackunpack(label, "No duplicates found within the directory")
 
 def tofile():
-    with open('duplicatefiles.txt', 'w') as f:
-        for i in listbox.get(first=0, last=tk.END):
-            f.write(i+"\n")
-    sp.Popen(["notepad.exe", "duplicatefiles.txt"])
+    if listbox.get(first=0, last=tk.END):
+        with open('duplicatefiles.txt', 'w') as f:
+            for i in listbox.get(first=0, last=tk.END):
+                f.write(i+"\n")
+        sp.Popen(["notepad.exe", "duplicatefiles.txt"])
         
 
 window = tk.Tk()
