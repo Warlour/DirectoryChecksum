@@ -116,7 +116,7 @@ def comparesizes():
             for key in duplicates:
                 if len(duplicates[key]) < 2:
                     nonduplicates.append(key)
-            
+            # !!!!!!!!!!!!!!!!!!Deletes nonduplicate for some reason
             for key in nonduplicates:
                 del duplicates[key]
 
